@@ -4,6 +4,7 @@ author: "Blake"
 date: "11/6/2018"
 output: html_document
 ---
+
 1. Randomly split the data into a training set (80% should suffice due to the large dataset, as a satisfactory variance in estimates should be met). As there is no known correct categorization for the attribute that I want to predict to compare the training set to, there will be no test set. The time constraints will limit me to one model/approach, so there will not be a validation set. Although a full model will not be created due to time, the code will be run on the training set and a random sample (10%) of the training set will be selected to check for accuracy (for those which have categories attached to them). 
 ```{r setup, include=FALSE}
 library(readxl)
