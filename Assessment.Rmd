@@ -24,7 +24,7 @@ train <- y[train_ind, ]
 ```
 2. Clean the data by removing punctuation and capitalization for the description words. This allows for differences in punctuation or capitalization to be removed. Determine frequencies of description for the training set. Look over the data, with special attention paid to the higher frequency descriptions, and begin to assign categories into the `Main Category _Corrected` through strings that provide the words to search for and grepl (reassignment will occur if results show as TRUE for the given word search). A deeper dive into the unique words associated with the categories would help to further assign more variables. Additional time would allow for more categories to be addressed as well.
 
-```{}
+```{r setup, include=FALSE}
 #clean the data for the descriptions
 train$Description <- removePunctuation(train$Description)
 train$Description  <-tolower(train$Description)
@@ -35,7 +35,7 @@ train$Description <- gsub("[[:punct:]]", "", train$Description)
 setDT(train)[, occurrence := .N, by = .(Description)]
 
 #Run searches for key words and fill in the replaced for main category based on the search
-x <- c("^.*?tutor", "^.*?academic", "^.*?chess", "^.*?mock trial", "^.*?chol", "^.*?philosophy club", "^.*?academic decathlon", "^.*?upward bound", "^.*?college now", "^.*?council", "^.*?science", "^.*?book". "^.*?ecology", "^.*?reading", "^.*?acca", ""^.*?math")
+x <- c("^.*?tutor", "^.*?academic", "^.*?chess", "^.*?mock trial", "^.*?chol", "^.*?philosophy club", "^.*?academic decathlon", "^.*?upward bound", "^.*?college now", "^.*?council", "^.*?science", "^.*?book", "^.*?ecology", "^.*?reading", "^.*?acca", "^.*?math")
 x1 <- grepl(paste(x, collapse = "|"), train$Description)
 x1 <- as.data.frame(x1)
 train <- cbind.data.frame(train, x1)
@@ -53,7 +53,7 @@ f1 <- as.data.frame(f1)
 train <- cbind.data.frame(train, f1)
 train$`Main Category _Corrected`[train$f1 == "TRUE"] <- "Volunteer"
 train <- select(train, 1:5)
-q <- c("^.*?choir", "^.*?chorus", "^.*?choral", ^.*?drama", "^.*?band", "^.*?anime", "^.*?art")
+q <- c("^.*?choir", "^.*?chorus", "^.*?choral", "^.*?drama", "^.*?band", "^.*?anime", "^.*?art")
 q1 <- grepl(paste(q, collapse = "|"), train$Description)
 q1 <- as.data.frame(q1)
 train <- cbind.data.frame(train, q1)
