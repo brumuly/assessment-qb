@@ -1,0 +1,77 @@
+---
+title: "AssessmentQB"
+author: "Blake"
+date: "11/6/2018"
+output: html_document
+---
+1. Randomly split the data into a training set (80% should suffice due to the large dataset, as a satisfactory variance in estimates should be met). As there is no known correct categorization for the attribute that I want to predict to compare the training set to, there will be no test set. The time constraints will limit me to one model/approach, so there will not be a validation set. Although a full model will not be created due to time, the code will be run on the training set and a random sample (10%) of the training set will be selected to check for accuracy (for those which have categories attached to them). 
+```{r setup, include=FALSE}
+library(readxl)
+library(caret)
+library(data.table)
+library(dplyr)
+library(tidyr)
+library(tidyverse)
+library(tm)
+library(SnowballC)
+d <- read_excel("extracurr-activity-ada.xlsx")
+y <- select (d, 1,3,4,6)
+set.seed(150)
+training <- floor(0.80 * nrow(y))
+train_ind <- sample(seq_len(nrow(y)), size = training)
+train <- y[train_ind, ]
+```
+2. Clean the data by removing punctuation and capitalization for the description words. This allows for differences in punctuation or capitalization to be removed. Determine frequencies of description for the training set. Look over the data, with special attention paid to the higher frequency descriptions, and begin to assign categories into the `Main Category _Corrected` through strings that provide the words to search for and grepl (reassignment will occur if results show as TRUE for the given word search). A deeper dive into the unique words associated with the categories would help to further assign more variables. Additional time would allow for more categories to be addressed as well.
+
+```{}
+#clean the data for the descriptions
+train$Description <- removePunctuation(train$Description)
+train$Description  <-tolower(train$Description)
+train$Description <- gsub("http.*","",  train$Description)
+train$Description <- gsub("[[:punct:]]", "", train$Description)
+
+#Find the frequencies
+setDT(train)[, occurrence := .N, by = .(Description)]
+
+#Run searches for key words and fill in the replaced for main category based on the search
+x <- c("^.*?tutor", "^.*?academic", "^.*?chess", "^.*?mock trial", "^.*?chol", "^.*?philosophy club", "^.*?academic decathlon", "^.*?upward bound", "^.*?college now", "^.*?council", "^.*?science", "^.*?book". "^.*?ecology", "^.*?reading", "^.*?acca", ""^.*?math")
+x1 <- grepl(paste(x, collapse = "|"), train$Description)
+x1 <- as.data.frame(x1)
+train <- cbind.data.frame(train, x1)
+train$`Main Category _Corrected`[train$x1 == "TRUE"] <- "Academic"
+train <- select(train, 1:5)
+g <- c("^.*?speech", "^.*?debate")
+g1 <- grepl(paste(g, collapse = "|"), train$Description)
+g1 <- as.data.frame(g1)
+train <- cbind.data.frame(train, g1)
+train$`Main Category _Corrected`[train$g1 == "TRUE"] <- "Debate/Speech"
+train <- select(train, 1:5)
+f <- c("^.*?key", "^.*?beta", "^.*?amnesty", "^.*?national honor", "^.*?cancer", "^.*?volunteer")
+f1 <- grepl(paste(f, collapse = "|"), train$Description)
+f1 <- as.data.frame(f1)
+train <- cbind.data.frame(train, f1)
+train$`Main Category _Corrected`[train$f1 == "TRUE"] <- "Volunteer"
+train <- select(train, 1:5)
+q <- c("^.*?choir", "^.*?chorus", "^.*?choral", ^.*?drama", "^.*?band", "^.*?anime", "^.*?art")
+q1 <- grepl(paste(q, collapse = "|"), train$Description)
+q1 <- as.data.frame(q1)
+train <- cbind.data.frame(train, q1)
+train$`Main Category _Corrected`[train$q1 == "TRUE"] <- "Art"
+train <- select(train, 1:5)
+r <- c("^.*?business", "^.*?journal", "^.*?newspaper", "^.*?occupation", "^.*?career", "^.*?politic")
+r1 <- grepl(paste(r, collapse = "|"), train$Description)
+r1 <- as.data.frame(r1)
+train <- cbind.data.frame(train, r1)
+train$`Main Category _Corrected`[train$r1 == "TRUE"] <- "Career-Oriented"
+train <- select(train, 1:5)
+z <- c("^.*?ball", "^.*?dance", "^.*?color guard", "^.*?colorguard")
+z1 <- grepl(paste(r, collapse = "|"), train$Description)
+z1 <- as.data.frame(z1)
+train <- cbind.data.frame(train, z1)
+train$`Main Category _Corrected`[train$r1 == "TRUE"] <- "Athletics"
+train <- select(train, 1:5)
+```
+
+```{}
+
+```
